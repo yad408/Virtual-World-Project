@@ -102,8 +102,8 @@ public final class VirtualWorld extends PApplet
     }
 
     private static Background createDefaultBackground(ImageStore imageStore) {
-        return new Background(DEFAULT_IMAGE_NAME,
-                              Functions.getImageList(imageStore,
+        return new Background(
+                Functions.getImageList(imageStore,
                                                      DEFAULT_IMAGE_NAME));
     }
 

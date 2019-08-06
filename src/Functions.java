@@ -1,7 +1,6 @@
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -225,7 +224,7 @@ public final class Functions
                                  Integer.parseInt(properties[BGND_ROW]));
             String id = properties[BGND_ID];
             world.setBackground(pt,
-                          new Background(id, getImageList(imageStore, id)));
+                          new Background(getImageList(imageStore, id)));
         }
 
         return properties.length == BGND_NUM_PROPERTIES;
