@@ -221,28 +221,8 @@ public final class Entity
     {
         switch (this.kind) {
             case MINER_FULL:
-                scheduler.scheduleEvent(this,
-                        createActivityAction(this, world, imageStore),
-                        this.actionPeriod);
-                scheduler.scheduleEvent(this,
-                        createAnimationAction(this, 0),
-                        this.getAnimationPeriod());
-                break;
 
             case MINER_NOT_FULL:
-                scheduler.scheduleEvent(this,
-                        createActivityAction(this, world, imageStore),
-                        this.actionPeriod);
-                scheduler.scheduleEvent(this,
-                        createAnimationAction(this, 0),
-                        this.getAnimationPeriod());
-                break;
-
-            case ORE:
-                scheduler.scheduleEvent(this,
-                        createActivityAction(this, world, imageStore),
-                        this.actionPeriod);
-                break;
 
             case ORE_BLOB:
                 scheduler.scheduleEvent(this,
@@ -253,6 +233,14 @@ public final class Entity
                         this.getAnimationPeriod());
                 break;
 
+            case ORE:
+
+            case VEIN:
+                scheduler.scheduleEvent(this,
+                        createActivityAction(this, world, imageStore),
+                        this.actionPeriod);
+                break;
+
             case QUAKE:
                 scheduler.scheduleEvent(this,
                         createActivityAction(this, world, imageStore),
@@ -260,12 +248,6 @@ public final class Entity
                 scheduler.scheduleEvent(this, createAnimationAction(this,
                         QUAKE_ANIMATION_REPEAT_COUNT),
                         this.getAnimationPeriod());
-                break;
-
-            case VEIN:
-                scheduler.scheduleEvent(this,
-                        createActivityAction(this, world, imageStore),
-                        this.actionPeriod);
                 break;
 
             default:

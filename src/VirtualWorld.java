@@ -52,8 +52,8 @@ public final class VirtualWorld extends PApplet
     */
     public void setup() {
         this.imageStore = new ImageStore(
-                createImageColored(TILE_WIDTH, TILE_HEIGHT,
-                                   DEFAULT_IMAGE_COLOR));
+                createImageColored(
+                ));
         this.world = new WorldModel(WORLD_ROWS, WORLD_COLS,
                                     createDefaultBackground(imageStore));
         this.view = new WorldView(VIEW_ROWS, VIEW_COLS, this, world, TILE_WIDTH,
@@ -107,10 +107,10 @@ public final class VirtualWorld extends PApplet
                                                      DEFAULT_IMAGE_NAME));
     }
 
-    private static PImage createImageColored(int width, int height, int color) {
-        PImage img = new PImage(width, height, RGB);
+    private static PImage createImageColored() {
+        PImage img = new PImage(VirtualWorld.TILE_WIDTH, VirtualWorld.TILE_HEIGHT, RGB);
         img.loadPixels();
-        Arrays.fill(img.pixels, color);
+        Arrays.fill(img.pixels, VirtualWorld.DEFAULT_IMAGE_COLOR);
         img.updatePixels();
         return img;
     }
