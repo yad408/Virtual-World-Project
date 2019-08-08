@@ -493,6 +493,4 @@ public final class Entity
         return new Entity(EntityKind.VEIN, id, position, images, 0, 0,
                 actionPeriod, 0);
     }
-
-
 }

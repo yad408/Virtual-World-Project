@@ -84,6 +84,4 @@ public final class Action
                         this.entity.getKind()));
         }
     }
-
-
 }

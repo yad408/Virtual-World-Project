@@ -1,8 +1,8 @@
 public final class Event
 {
-    public Action action;
-    public long time;
-    public Entity entity;
+    Action action;
+    long time;
+    Entity entity;
 
     public Event(Action action, long time, Entity entity) {
         this.action = action;

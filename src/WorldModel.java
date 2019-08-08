@@ -186,6 +186,4 @@ public final class WorldModel
         return Optional.empty();
     }
 
-
-
 }

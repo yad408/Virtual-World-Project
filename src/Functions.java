@@ -77,30 +77,6 @@ public final class Functions
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     static List<PImage> getImageList(ImageStore imageStore, String key) {
         return imageStore.images.getOrDefault(key, imageStore.defaultImages);
     }
@@ -250,8 +226,7 @@ public final class Functions
         return properties.length == MINER_NUM_PROPERTIES;
     }
 
-    private static boolean parseObstacle(
-            String[] properties, WorldModel world, ImageStore imageStore)
+    private static boolean parseObstacle(String[] properties, WorldModel world, ImageStore imageStore)
     {
         if (properties.length == OBSTACLE_NUM_PROPERTIES) {
             Point pt = new Point(Integer.parseInt(properties[OBSTACLE_COL]),
@@ -307,10 +282,6 @@ public final class Functions
                                        getImageList(imageStore, VEIN_KEY));
             world.tryAddEntity(entity);
         }
-
         return properties.length == VEIN_NUM_PROPERTIES;
     }
-
-
-
 }
