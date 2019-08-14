@@ -3,7 +3,7 @@ import java.util.Optional;
 
 import processing.core.PImage;
 
-public interface Entity
+public final class Entity
 {
 
     private static final String BLOB_KEY = "blob";
@@ -24,10 +24,78 @@ public interface Entity
     private static final int QUAKE_ANIMATION_REPEAT_COUNT = 10;
     private static final String ORE_KEY = "ore";
 
+    private EntityKind kind;
+    private String id;
+    private Point position;
+    private List<PImage> images;
+    private int imageIndex;
+    private int resourceLimit;
+    private int resourceCount;
+    private int actionPeriod;
+    private int animationPeriod;
 
+    private Entity(
+            EntityKind kind,
+            String id,
+            Point position,
+            List<PImage> images,
+            int resourceLimit,
+            int resourceCount,
+            int actionPeriod,
+            int animationPeriod)
+    {
+        this.kind = kind;
+        this.id = id;
+        this.position = position;
+        this.images = images;
+        this.imageIndex = 0;
+        this.resourceLimit = resourceLimit;
+        this.resourceCount = resourceCount;
+        this.actionPeriod = actionPeriod;
+        this.animationPeriod = animationPeriod;
+    }
 
+    EntityKind getKind() {
+        return kind;
+    }
 
+    Point getPosition(){
+        return position;
+    }
 
+    List<PImage> getImages() {
+        return images;
+    }
+
+    int getImageIndex() {
+        return imageIndex;
+    }
+
+    void setPosition(Point position) {
+        this.position = position;
+    }
+
+    private void setImages(List<PImage> images) {
+        this.images = images;
+    }
+
+    int getAnimationPeriod() {
+        switch (this.getKind()) {
+            case MINER_FULL:
+            case MINER_NOT_FULL:
+            case ORE_BLOB:
+            case QUAKE:
+                return this.animationPeriod;
+            default:
+                throw new UnsupportedOperationException(
+                        String.format("getAnimationPeriod not supported for %s",
+                                this.getKind()));
+        }
+    }
+
+    void nextImage() {
+        this.imageIndex = (this.getImageIndex() + 1) % this.getImages().size();
+    }
 
     void executeMinerFullActivity(
             WorldModel world,
@@ -344,8 +412,23 @@ public interface Entity
         return newPos;
     }
 
+    static Action createAnimationAction(Entity entity, int repeatCount) {
+        return new Action(ActionKind.ANIMATION, entity, null, null,
+                repeatCount);
+    }
 
+    private static Action createActivityAction(
+            Entity entity, WorldModel world, ImageStore imageStore)
+    {
+        return new Action(ActionKind.ACTIVITY, entity, world, imageStore, 0);
+    }
 
+    static Entity createBlacksmith(
+            String id, Point position, List<PImage> images)
+    {
+        return new Entity(EntityKind.BLACKSMITH, id, position, images, 0, 0, 0,
+                0);
+    }
 
     private static Entity createMinerFull(
             String id,

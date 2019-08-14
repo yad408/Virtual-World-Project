@@ -1,14 +1,36 @@
-public interface Action
+public final class Action
 {
     private ActionKind kind;
+    private Entity entity;
+    private WorldModel world;
+    private ImageStore imageStore;
+    private int repeatCount;
 
     Action(
             ActionKind kind,
+            Entity entity,
+            WorldModel world,
+            ImageStore imageStore,
+            int repeatCount)
     {
         this.kind = kind;
-
+        this.entity = entity;
+        this.world = world;
+        this.imageStore = imageStore;
+        this.repeatCount = repeatCount;
     }
 
+    void executeAction(EventScheduler scheduler) {
+        switch (this.kind) {
+            case ACTIVITY:
+                executeActivityAction(scheduler);
+                break;
+
+            case ANIMATION:
+                executeAnimationAction(scheduler);
+                break;
+        }
+    }
 
     private void executeAnimationAction(EventScheduler scheduler)
     {
