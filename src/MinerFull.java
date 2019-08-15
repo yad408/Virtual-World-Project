@@ -105,7 +105,7 @@ public class MinerFull implements Moveable{
             return true;
         }
         else {
-            Point nextPos = nextPosition(world, target.getPosition());
+            Point nextPos = this.nextPosition(world, target.getPosition());
 
             if (!this.position.equals(nextPos)) {
                 Optional<Entity> occupant = world.getOccupant(nextPos);
