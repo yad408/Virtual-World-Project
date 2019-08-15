@@ -4,12 +4,10 @@ import java.util.List;
 
 public class Quake implements Animationable {
 
-    private static final String QUAKE_KEY = "quake";
     private static final String QUAKE_ID = "quake";
     private static final int QUAKE_ACTION_PERIOD = 1100;
     private static final int QUAKE_ANIMATION_PERIOD = 100;
     private static final int QUAKE_ANIMATION_REPEAT_COUNT = 10;
-    private static final String ORE_KEY = "ore";
 
     private String id;
     private Point position;

@@ -6,7 +6,6 @@ import java.util.Optional;
 public class OreBlob implements Moveable{
 
     private static final String QUAKE_KEY = "quake";
-    private static final String QUAKE_ID = "quake";
 
     private String id;
     private Point position;
