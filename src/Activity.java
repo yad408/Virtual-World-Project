@@ -15,7 +15,7 @@ public class Activity implements Action {
     }
 
     public void executeAction(EventScheduler scheduler) {
-        if (this.entity instanceof MinerFull){
+        if (entity instanceof MinerFull){
             ((MinerFull)this.entity).execute(this.world, this.imageStore, scheduler);
         }
         if (this.entity instanceof MinerNotFull){
