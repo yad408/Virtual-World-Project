@@ -4,11 +4,19 @@ import processing.core.PImage;
 
 public final class Background
 {
-    List<PImage> images;
-    int imageIndex;
+    private List<PImage> images;
+    private int imageIndex;
 
     public Background(List<PImage> images) {
         this.images = images;
+    }
+
+    public List<PImage> getImages(){
+        return images;
+    }
+
+    public int getImageIndex() {
+        return imageIndex;
     }
 
     static PImage getCurrentImage(Object entity) {

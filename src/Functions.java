@@ -62,10 +62,10 @@ public final class Functions
     private static final int VEIN_ACTION_PERIOD = 4;
 
 
-
-    static List<PImage> getImageList(ImageStore imageStore, String key) {
+    public static List<PImage> getImageList(ImageStore imageStore, String key) {
         return imageStore.images.getOrDefault(key, imageStore.defaultImages);
     }
+
 
     static void loadImages(
             Scanner in, ImageStore imageStore, PApplet screen)
@@ -105,7 +105,7 @@ public final class Functions
         }
     }
 
-    private static List<PImage> getImages(
+    public static List<PImage> getImages(
             Map<String, List<PImage>> images, String key)
     {
         return images.computeIfAbsent(key, k -> new LinkedList<>());
@@ -198,7 +198,7 @@ public final class Functions
         if (properties.length == MINER_NUM_PROPERTIES) {
             Point pt = new Point(Integer.parseInt(properties[MINER_COL]),
                                  Integer.parseInt(properties[MINER_ROW]));
-            Entity entity = Entity.createMinerNotFull(properties[MINER_ID],
+            Entity entity = MinerNotFull.createMinerNotFull(properties[MINER_ID],
                                                Integer.parseInt(
                                                        properties[MINER_LIMIT]),
                                                pt, Integer.parseInt(
@@ -217,7 +217,7 @@ public final class Functions
         if (properties.length == OBSTACLE_NUM_PROPERTIES) {
             Point pt = new Point(Integer.parseInt(properties[OBSTACLE_COL]),
                                  Integer.parseInt(properties[OBSTACLE_ROW]));
-            Entity entity = Entity.createObstacle(properties[OBSTACLE_ID], pt,
+            Entity entity = Obstacle.createObstacle(properties[OBSTACLE_ID], pt,
                                            getImageList(imageStore,
                                                         OBSTACLE_KEY));
             world.tryAddEntity(entity);
@@ -232,7 +232,7 @@ public final class Functions
         if (properties.length == ORE_NUM_PROPERTIES) {
             Point pt = new Point(Integer.parseInt(properties[ORE_COL]),
                                  Integer.parseInt(properties[ORE_ROW]));
-            Entity entity = Entity.createOre(properties[ORE_ID], pt, Integer.parseInt(
+            Entity entity = Ore.createOre(properties[ORE_ID], pt, Integer.parseInt(
                     properties[ORE_ACTION_PERIOD]),
                                       getImageList(imageStore, ORE_KEY));
             world.tryAddEntity(entity);
@@ -247,7 +247,7 @@ public final class Functions
         if (properties.length == SMITH_NUM_PROPERTIES) {
             Point pt = new Point(Integer.parseInt(properties[SMITH_COL]),
                                  Integer.parseInt(properties[SMITH_ROW]));
-            Entity entity = Entity.createBlacksmith(properties[SMITH_ID], pt,
+            Entity entity = Blacksmith.createBlacksmith(properties[SMITH_ID], pt,
                                              getImageList(imageStore,
                                                           SMITH_KEY));
             world.tryAddEntity(entity);
@@ -262,7 +262,7 @@ public final class Functions
         if (properties.length == VEIN_NUM_PROPERTIES) {
             Point pt = new Point(Integer.parseInt(properties[VEIN_COL]),
                                  Integer.parseInt(properties[VEIN_ROW]));
-            Entity entity = Entity.createVein(properties[VEIN_ID], pt,
+            Entity entity = Vein.createVein(properties[VEIN_ID], pt,
                                        Integer.parseInt(
                                                properties[VEIN_ACTION_PERIOD]),
                                        getImageList(imageStore, VEIN_KEY));

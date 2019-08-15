@@ -10,6 +10,11 @@ public final class WorldModel
     private Entity occupancy[][];
     private Set<Entity> entities;
 
+    private static final String ORE_ID_PREFIX = "ore -- ";
+    private static final int ORE_CORRUPT_MIN = 20000;
+    private static final int ORE_CORRUPT_MAX = 30000;
+    private static final int ORE_REACH = 1;
+
     WorldModel(int numRows, int numCols, Background defaultBackground) {
         this.numRows = numRows;
         this.numCols = numCols;
@@ -85,11 +90,11 @@ public final class WorldModel
         return deltaX * deltaX + deltaY * deltaY;
     }
 
-    Optional<Entity> findNearest(Point pos, EntityKind kind)
+    Optional<Entity> findNearest(Point pos, Class kind)
     {
         List<Entity> ofType = new LinkedList<>();
         for (Entity entity : entities) {
-            if (entity.getKind() == kind) {
+            if (entity.getClass() == kind) {
                 ofType.add(entity);
             }
         }
@@ -134,7 +139,7 @@ public final class WorldModel
     Optional<PImage> getBackgroundImage(Point pos)
     {
         if (withinBounds(pos)) {
-            return Optional.of(Functions.getCurrentImage(getBackgroundCell(pos)));
+            return Optional.of(Background.getCurrentImage(getBackgroundCell(pos)));
         }
         else {
             return Optional.empty();
@@ -174,8 +179,8 @@ public final class WorldModel
     }
 
     Optional<Point> findOpenAround(Point pos) {
-        for (int dy = -Entity.ORE_REACH; dy <= Entity.ORE_REACH; dy++) {
-            for (int dx = -Entity.ORE_REACH; dx <= Entity.ORE_REACH; dx++) {
+        for (int dy = -ORE_REACH; dy <= ORE_REACH; dy++) {
+            for (int dx = -ORE_REACH; dx <= ORE_REACH; dx++) {
                 Point newPt = new Point(pos.x + dx, pos.y + dy);
                 if (withinBounds(newPt) && !isOccupied(newPt)) {
                     return Optional.of(newPt);

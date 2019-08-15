@@ -9,4 +9,10 @@ public final class Event
         this.time = time;
         this.entity = entity;
     }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+    public Entity getEntity(){return entity;}
+
 }

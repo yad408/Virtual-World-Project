@@ -1,3 +1,3 @@
-public interface Animationable extends Executable {
+public interface Animationable extends Executeable{
     int getAnimationPeriod();
 }

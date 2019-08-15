@@ -463,7 +463,7 @@ public final class Entity
     }
 
     static Entity createOre(
-            String id, Point position, int actionPeriod, List<PImage> images)
+    String id, Point position, int actionPeriod, List<PImage> images)
     {
         return new Entity(EntityKind.ORE, id, position, images, 0, 0,
                 actionPeriod, 0);

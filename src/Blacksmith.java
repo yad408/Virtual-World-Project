@@ -13,7 +13,7 @@ public class Blacksmith implements Entity {
     private int actionPeriod;
     private int animationPeriod;
 
-    public Blacksmith(
+    private Blacksmith(
             String id,
             Point position,
             List<PImage> images,
@@ -32,71 +32,42 @@ public class Blacksmith implements Entity {
         this.animationPeriod = animationPeriod;
     }
 
-    public Point getPosition(){
-        return position;
+    public int getImageIndex() {
+        return imageIndex;
     }
 
-    public void setPosition(Point pt) {
-        this.position = pt;
+    public int getAnimationPeriod() {
+        return this.animationPeriod;
+    }
+
+
+    public void nextImage() {
+        imageIndex = (this.getImageIndex() + 1) % this.getImages().size();
     }
 
     public List<PImage> getImages() {
         return images;
     }
 
-    public void setImages(List<PImage> images){
-        this.images = images;
+    public Point getPosition(){
+        return position;
     }
 
-    public int getImageIndex() {
-        return imageIndex;
+    public void setPosition(Point position) {
+        this.position = position;
     }
 
-    public void setImageIndex(int idx) {
-        this.imageIndex = idx;
-    }
-
-    public int getResourceLimit() {
-        return resourceLimit;
-    }
-
-    public void setResourceLimit(int lim) {
-        this.resourceLimit = lim;
-    }
-
-    public int getResourceCount() {
-        return resourceCount;
-    }
-
-    public void setResourceCount(int cnt){
-        this.resourceCount = cnt;
-    }
-
-    public int getActionPeriod() {
-        return  actionPeriod;
-    }
-
-    public void setActionPeriod(int act){
-        this.actionPeriod = act;
-    }
-
-    public int getAnimationPeriod(){
-        return animationPeriod;
-    }
-
-    public void setAnimationPeriod(int an) {
-        this.animationPeriod = an;
-    }
-
-    void nextImage() {
-        this.imageIndex = (this.getImageIndex() + 1) % this.getImages().size();
-    }
-
-
-    public static Blacksmith createBlacksmith(
+    static Blacksmith createBlacksmith(
             String id, Point position, List<PImage> images)
     {
         return new Blacksmith(id, position, images, 0, 0, 0,
                 0);
     }
+
+
+
+
+
+
+
 }

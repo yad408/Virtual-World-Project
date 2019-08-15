@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Executable;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -139,11 +140,13 @@ public final class VirtualWorld extends PApplet
         }
     }
 
-    private void scheduleActions(
+    public static void scheduleActions(
             WorldModel world, EventScheduler scheduler, ImageStore imageStore)
     {
         for (Entity entity : world.getEntities()) {
-            entity.scheduleActions(scheduler, world, imageStore);
+            if(entity instanceof Executeable) {
+                ((Executeable) entity).scheduleActions(scheduler, world, imageStore);
+            }
         }
     }
 
