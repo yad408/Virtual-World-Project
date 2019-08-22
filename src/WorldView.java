@@ -59,7 +59,7 @@ public final class WorldView
         viewport.shift(newCol, newRow);
     }
 
-    private void drawBackground() {
+    public void drawBackground() {
         for (int row = 0; row < this.viewport.getNumRows(); row++) {
             for (int col = 0; col < this.viewport.getNumCols(); col++) {
                 Point worldPoint = this.viewport.viewportToWorld(col, row);
@@ -73,7 +73,7 @@ public final class WorldView
         }
     }
 
-    private void drawEntities() {
+    public void drawEntities() {
         for (Entity entity : this.getWorld().getEntities()) {
             Point pos = entity.getPosition();
 

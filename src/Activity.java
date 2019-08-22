@@ -1,41 +1,35 @@
-public class Activity implements Action {
+public class Activity extends Action {
 
-    private Entity entity;
-    private WorldModel world;
-    private ImageStore imageStore;
-
-    private Activity(
+    public Activity(
             Entity entity,
             WorldModel world,
-            ImageStore imageStore)
+            ImageStore imageStore, int repeatCount)
     {
-        this.entity = entity;
-        this.world = world;
-        this.imageStore = imageStore;
+        super(entity, world, imageStore, repeatCount);
     }
 
     public void executeAction(EventScheduler scheduler) {
-        if (entity instanceof MinerFull){
+        if (this.entity instanceof MinerFull){
             ((MinerFull)this.entity).execute(this.world, this.imageStore, scheduler);
         }
         if (this.entity instanceof MinerNotFull){
             ((MinerNotFull)this.entity).execute(this.world, this.imageStore, scheduler);
         }
-        if (entity instanceof Ore){
-            ((Ore)entity).execute(world, imageStore, scheduler);
+        if (this.entity instanceof Ore){
+            ((Ore)this.entity).execute(world, imageStore, scheduler);
         }
-        if (entity instanceof OreBlob){
-            ((OreBlob)entity).execute(world, imageStore, scheduler);
+        if (this.entity instanceof OreBlob){
+            ((OreBlob)this.entity).execute(world, imageStore, scheduler);
         }
-        if (entity instanceof Quake){
-            ((Quake)entity).execute(world, imageStore, scheduler);
+        if (this.entity instanceof Quake){
+            ((Quake)this.entity).execute(world, imageStore, scheduler);
         }
-        if (entity instanceof Vein){
-            ((Vein)entity).execute(world, imageStore, scheduler);
+        if (this.entity instanceof Vein){
+            ((Vein)this.entity).execute(world, imageStore, scheduler);
         }
     }
 
-    static Activity createActivityAction(Entity entity, WorldModel world, ImageStore imageStore){
-        return new Activity(entity, world, imageStore);
+    public static Activity createActivityAction(Entity entity, WorldModel world, ImageStore imageStore){
+        return new Activity(entity, world, imageStore, 0);
     }
 }

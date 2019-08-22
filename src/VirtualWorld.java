@@ -104,7 +104,7 @@ public final class VirtualWorld extends PApplet
 
     private Background createDefaultBackground(ImageStore imageStore) {
         return new Background(
-                Functions.getImageList(imageStore,
+                ImageStore.getImageList(imageStore,
                                                      DEFAULT_IMAGE_NAME));
     }
 
@@ -121,7 +121,7 @@ public final class VirtualWorld extends PApplet
     {
         try {
             Scanner in = new Scanner(new File(filename));
-            Functions.loadImages(in, imageStore, screen);
+            ImageStore.loadImages(in, imageStore, screen);
         }
         catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
@@ -144,8 +144,8 @@ public final class VirtualWorld extends PApplet
             WorldModel world, EventScheduler scheduler, ImageStore imageStore)
     {
         for (Entity entity : world.getEntities()) {
-            if(entity instanceof Executeable) {
-                ((Executeable) entity).scheduleActions(scheduler, world, imageStore);
+            if(entity instanceof AbstractEntity) {
+                ((AbstractEntity) entity).scheduleActions(scheduler, world, imageStore);
             }
         }
     }

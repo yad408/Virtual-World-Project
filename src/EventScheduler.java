@@ -11,15 +11,15 @@ public final class EventScheduler {
         this.timeScale = timeScale;
     }
 
-    private PriorityQueue<Event> getEventQueue() {
+    public PriorityQueue<Event> getEventQueue() {
         return eventQueue;
     }
 
-    private Map<Entity, List<Event>> getPendingEvents() {
+    public Map<Entity, List<Event>> getPendingEvents() {
         return pendingEvents;
     }
 
-    private double getTimeScale() {
+    public double getTimeScale() {
         return timeScale;
     }
 
@@ -50,16 +50,16 @@ public final class EventScheduler {
         }
 
     }
-    private void removePendingEvent(Event event)
+    public void removePendingEvent(Event event)
     {
-        List<Event> pending = this.pendingEvents.get(event.entity);
+        List<Event> pending = this.pendingEvents.get(event.getEntity());
 
         if (pending != null) {
             pending.remove(event);
         }
     }
 
-    void updateOnTime(long time) {
+    public void updateOnTime(long time) {
         while (!this.eventQueue.isEmpty()
                 && this.eventQueue.peek().time < time) {
             Event next = this.eventQueue.poll();

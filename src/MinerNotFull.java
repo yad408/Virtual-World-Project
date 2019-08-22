@@ -3,18 +3,9 @@ import processing.core.PImage;
 import java.util.List;
 import java.util.Optional;
 
-public class MinerNotFull implements Moveable{
+public class MinerNotFull extends MinerEntity{
 
-    private String id;
-    private Point position;
-    private List<PImage> images;
-    private int imageIndex;
-    private int resourceLimit;
-    private int resourceCount;
-    private int actionPeriod;
-    private int animationPeriod;
-
-    private MinerNotFull(
+    public MinerNotFull(
             String id,
             Point position,
             List<PImage> images,
@@ -23,16 +14,9 @@ public class MinerNotFull implements Moveable{
             int actionPeriod,
             int animationPeriod)
     {
-        this.id = id;
-        this.position = position;
-        this.images = images;
-        this.imageIndex = 0;
-        this.resourceLimit = resourceLimit;
-        this.resourceCount = resourceCount;
-        this.actionPeriod = actionPeriod;
-        this.animationPeriod = animationPeriod;
+        super(id, position, images, resourceLimit, resourceCount, actionPeriod, animationPeriod);
     }
-    static MinerNotFull createMinerNotFull(
+    public static MinerNotFull createMinerNotFull(
             String id,
             int resourceLimit,
             Point position,
@@ -43,63 +27,15 @@ public class MinerNotFull implements Moveable{
         return new MinerNotFull(id, position, images,
                 resourceLimit, 0, actionPeriod, animationPeriod);
     }
-    public int getAnimationPeriod() {
-        return animationPeriod;
-    }
 
-    public void nextImage(){
-        imageIndex = (this.getImageIndex() + 1) % this.getImages().size();
-    }
-    public List<PImage> getImages(){
-        return images;
-    }
 
-    public Point getPosition(){
-        return position;
-    }
-
-    public void setPosition(Point position) {
-        this.position = position;
-    }
-
-    public int getImageIndex() {
-        return imageIndex;
-    }
-
-    public void setImageIndex(int idx){
-        imageIndex = idx;
-
-    }
-    public void setImages(List<PImage> image) {
-        images = image;
-    }
-
-    public Point nextPosition(WorldModel world, Point destPos) {
-        int horiz = Integer.signum(destPos.x - this.position.x);
-        Point newPos = new Point(this.position.x + horiz, this.position.y);
-
-        if (horiz == 0 || world.isOccupied(newPos)) {
-            int vert = Integer.signum(destPos.y - this.position.y);
-            newPos = new Point(this.position.x, this.position.y + vert);
-
-            if (vert == 0 || world.isOccupied(newPos)) {
-                newPos = this.position;
-            }
-        }
-
-        return newPos;
-    }
-
-    private boolean transformNotFull(
+    public boolean transformNotFull(
             WorldModel world,
             EventScheduler scheduler,
             ImageStore imageStore)
     {
-        if (this.resourceCount >= this.resourceLimit) {
-            MinerFull miner = MinerFull.createMinerFull(this.id, this.resourceLimit,
-                    this.position, this.actionPeriod,
-                    this.animationPeriod,
-                    this.images);
+        if (this.getResourceCount() >= this.getResourceLimit()) {
+            MinerFull miner = MinerFull.createMinerFull(this.getId(), this.getResourceLimit(), this.getPosition(), this.getActionPeriod(), this.getAnimationPeriod(), this.getImages());
 
             world.removeEntity(this);
             scheduler.unscheduleAllEvents(this);
@@ -113,12 +49,12 @@ public class MinerNotFull implements Moveable{
         return false;
     }
 
-    private boolean moveToNotFull(
+    public boolean moveToNotFull(
             WorldModel world,
             Entity target,
             EventScheduler scheduler)
     {
-        if (Point.adjacent(this.position, target.getPosition())) {
+        if (Point.adjacent(this.getPosition(), target.getPosition())) {
             this.resourceCount += 1;
             world.removeEntity(target);
             scheduler.unscheduleAllEvents(target);
@@ -144,7 +80,7 @@ public class MinerNotFull implements Moveable{
             EventScheduler scheduler)
     {
         Optional<Entity> notFullTarget =
-                world.findNearest(this.position, Ore.class);
+                world.findNearest(this.getPosition(), Ore.class);
 
         if (notFullTarget.isEmpty() || !moveToNotFull(world,
                 notFullTarget.get(),
@@ -153,19 +89,11 @@ public class MinerNotFull implements Moveable{
         {
             scheduler.scheduleEvent(this,
                     Activity.createActivityAction(this, world, imageStore),
-                    this.actionPeriod);
+                    this.getActionPeriod());
         }
     }
 
-    public void scheduleActions(EventScheduler scheduler,
-                                WorldModel world,
-                                ImageStore imageStore){
-        scheduler.scheduleEvent(this,
-                Activity.createActivityAction(this, world, imageStore),
-                this.getAnimationPeriod());
-        scheduler.scheduleEvent(this,
-                Animation.createAnimationAction(this, 0),
-                this.getAnimationPeriod());
-    }
+
+
 
 }

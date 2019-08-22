@@ -42,6 +42,8 @@ public final class WorldModel
     Set<Entity> getEntities() {
         return entities;
     }
+
+
     void tryAddEntity(Entity entity) {
         if (isOccupied(entity.getPosition())) {
             // arguably the wrong type of exception, but we are not

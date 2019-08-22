@@ -11,13 +11,6 @@ public final class Background
         this.images = images;
     }
 
-    public List<PImage> getImages(){
-        return images;
-    }
-
-    public int getImageIndex() {
-        return imageIndex;
-    }
 
     static PImage getCurrentImage(Object entity) {
         if (entity instanceof Background) {

@@ -1,4 +1,4 @@
-public final class Event
+final class Event
 {
     Action action;
     long time;
@@ -14,5 +14,17 @@ public final class Event
         this.entity = entity;
     }
     public Entity getEntity(){return entity;}
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    public Action getAction(){
+        return action;
+    }
+
+    public long getTime() {
+        return time;
+    }
 
 }
