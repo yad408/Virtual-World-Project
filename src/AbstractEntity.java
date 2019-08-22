@@ -4,26 +4,35 @@ import java.util.List;
 
 abstract public class AbstractEntity extends Entity {
 
+    private final int actionPeriod;
+    private int imageIndex;
 
-
-    public AbstractEntity(String id, Point position, List<PImage> images, int actionPeriod, int animationPeriod){
-        super(id, position, images, actionPeriod, animationPeriod);
+    AbstractEntity(String id, Point position, int actionPeriod, List<PImage> images) {
+        super(id, position, images);
+        this.imageIndex = 0;
+        this.actionPeriod = actionPeriod;
     }
 
-
-
-
-    public void scheduleActions(EventScheduler scheduler,
-                                WorldModel world,
-                                ImageStore imageStore) {
-        scheduler.scheduleEvent(this,
-                Activity.createActivityAction(this, world, imageStore),
-                this.getAnimationPeriod());
-        scheduler.scheduleEvent(this,
-                Animation.createAnimationAction(this, 0),
-                this.getAnimationPeriod());
+    int getActionPeriod() {
+        return actionPeriod;
     }
 
+    int getImageIndex() {
+        return imageIndex;
+    }
 
+    void setImageIndex(int val) {
+        imageIndex = val;
+    }
+
+    Activity createActivityAction(WorldModel world, ImageStore imageStore) {
+        return new Activity(this, world, imageStore);
+    }
+
+    void scheduleActivity(EventScheduler scheduler, WorldModel world, ImageStore imageStore) {
+        scheduler.scheduleEvent(this, createActivityAction(world, imageStore), actionPeriod);
+    }
+
+    public abstract void executeActivity(EventScheduler scheduler, Activity activity);
 
 }

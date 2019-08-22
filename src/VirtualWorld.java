@@ -1,10 +1,10 @@
+import processing.core.PApplet;
+import processing.core.PImage;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Executable;
 import java.util.Arrays;
 import java.util.Scanner;
-
-import processing.core.*;
 
 public final class VirtualWorld extends PApplet
 {
@@ -37,15 +37,54 @@ public final class VirtualWorld extends PApplet
 
     private static double timeScale = 1.0;
 
-    private ImageStore imageStore;
-    private WorldModel world;
+    public ImageStore imageStore;
+    public WorldModel world;
     private WorldView view;
-    private EventScheduler scheduler;
+    public EventScheduler scheduler;
 
-    private long nextTime;
+    private long next_time;
 
     public void settings() {
         size(VIEW_WIDTH, VIEW_HEIGHT);
+    }
+
+    private static Background createDefaultBackground(ImageStore imageStore) {
+        return new Background(DEFAULT_IMAGE_NAME, imageStore.getImageList(DEFAULT_IMAGE_NAME));
+    }
+
+    private static PImage createImageColored() {
+        PImage img = new PImage(VirtualWorld.TILE_WIDTH, VirtualWorld.TILE_HEIGHT, RGB);
+        img.loadPixels();
+        Arrays.fill(img.pixels, VirtualWorld.DEFAULT_IMAGE_COLOR);
+        img.updatePixels();
+        return img;
+    }
+
+    private static void loadImages(ImageStore imageStore,
+                                   PApplet screen) {
+        try {
+            Scanner in = new Scanner(new File(VirtualWorld.IMAGE_LIST_FILE_NAME));
+            imageStore.loadImages(in, screen);
+        } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private static void loadWorld(WorldModel world,
+                                  ImageStore imageStore) {
+        try {
+            Scanner in = new Scanner(new File(VirtualWorld.LOAD_FILE_NAME));
+            world.load(in, imageStore);
+        } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private static void scheduleActions(WorldModel world,
+                                        EventScheduler scheduler, ImageStore imageStore) {
+        for (AbstractEntity entity : world.AbstractEntities) {
+            entity.scheduleActivity(scheduler, world, imageStore);
+        }
     }
 
     /*
@@ -53,30 +92,29 @@ public final class VirtualWorld extends PApplet
     */
     public void setup() {
         this.imageStore = new ImageStore(
-                createImageColored(
-                ));
+                createImageColored());
         this.world = new WorldModel(WORLD_ROWS, WORLD_COLS,
-                                    createDefaultBackground(imageStore));
-        this.view = new WorldView(VIEW_ROWS, VIEW_COLS, this, world, TILE_WIDTH,
-                                  TILE_HEIGHT);
+                createDefaultBackground(imageStore));
+        this.view = new WorldView(VIEW_ROWS, VIEW_COLS, this, world,
+                TILE_WIDTH, TILE_HEIGHT);
         this.scheduler = new EventScheduler(timeScale);
 
-        loadImages(IMAGE_LIST_FILE_NAME, imageStore, this);
-        loadWorld(world, LOAD_FILE_NAME, imageStore);
+        loadImages(imageStore, this);
+        loadWorld(world, imageStore);
 
         scheduleActions(world, scheduler, imageStore);
 
-        nextTime = System.currentTimeMillis() + TIMER_ACTION_PERIOD;
+        next_time = System.currentTimeMillis() + TIMER_ACTION_PERIOD;
     }
 
     public void draw() {
         long time = System.currentTimeMillis();
-        if (time >= nextTime) {
+        if (time >= next_time) {
             this.scheduler.updateOnTime(time);
-            nextTime = time + TIMER_ACTION_PERIOD;
+            next_time = time + TIMER_ACTION_PERIOD;
         }
 
-        this.view.drawViewport();
+        view.drawViewport();
     }
 
     public void keyPressed() {
@@ -98,55 +136,7 @@ public final class VirtualWorld extends PApplet
                     dx = 1;
                     break;
             }
-            this.view.shiftView(dx, dy);
-        }
-    }
-
-    private Background createDefaultBackground(ImageStore imageStore) {
-        return new Background(
-                ImageStore.getImageList(imageStore,
-                                                     DEFAULT_IMAGE_NAME));
-    }
-
-    private PImage createImageColored() {
-        PImage img = new PImage(VirtualWorld.TILE_WIDTH, VirtualWorld.TILE_HEIGHT, RGB);
-        img.loadPixels();
-        Arrays.fill(img.pixels, VirtualWorld.DEFAULT_IMAGE_COLOR);
-        img.updatePixels();
-        return img;
-    }
-
-    private void loadImages(
-            String filename, ImageStore imageStore, PApplet screen)
-    {
-        try {
-            Scanner in = new Scanner(new File(filename));
-            ImageStore.loadImages(in, imageStore, screen);
-        }
-        catch (FileNotFoundException e) {
-            System.err.println(e.getMessage());
-        }
-    }
-
-    private void loadWorld(
-            WorldModel world, String filename, ImageStore imageStore)
-    {
-        try {
-            Scanner in = new Scanner(new File(filename));
-            Functions.load(in, world, imageStore);
-        }
-        catch (FileNotFoundException e) {
-            System.err.println(e.getMessage());
-        }
-    }
-
-    public static void scheduleActions(
-            WorldModel world, EventScheduler scheduler, ImageStore imageStore)
-    {
-        for (Entity entity : world.getEntities()) {
-            if(entity instanceof AbstractEntity) {
-                ((AbstractEntity) entity).scheduleActions(scheduler, world, imageStore);
-            }
+            view.shiftView(dx, dy);
         }
     }
 

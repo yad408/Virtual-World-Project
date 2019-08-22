@@ -4,15 +4,31 @@ import java.util.List;
 
 abstract public class AnimateEntity extends AbstractEntity {
 
-    public AnimateEntity(String id, Point position, List<PImage> images, int actionPeriod, int animationPeriod){
-        super(id, position, images, actionPeriod, animationPeriod);
+    private final int resourceLimit;
+    private final int animationPeriod;
+
+    AnimateEntity(String id, int resourceLimit, Point position, int actionPeriod, int animationPeriod, List<PImage> images) {
+        super(id, position, actionPeriod, images);
+        this.resourceLimit = resourceLimit;
+        this.animationPeriod = animationPeriod;
     }
 
-    public void scheduleActions(EventScheduler scheduler, WorldModel world, ImageStore imageStore) {
-
-        scheduler.scheduleEvent(this,
-                Activity.createActivityAction(this, world, imageStore), this.getActionPeriod());
+    Animation createAnimationAction(int repeatCount) {
+        return new Animation(this, repeatCount);
     }
 
+    int getAnimationPeriod() {
+        return animationPeriod;
+    }
+
+    int getResourceLimit() {
+        return resourceLimit;
+    }
+
+    public abstract void executeAnimation(EventScheduler scheduler, Animation animation);
+
+    void nextImage() {
+        setImageIndex((getImageIndex() + 1) * getImages().size());
+    }
 
 }

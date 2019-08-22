@@ -2,25 +2,14 @@ import processing.core.PImage;
 
 import java.util.List;
 
-public class Blacksmith extends Entity {
+final class Blacksmith extends Entity {
 
-    public Blacksmith(
+    Blacksmith(
             String id,
             Point position,
-            List<PImage> images,
-            int actionPeriod,
-            int animationPeriod)
+            List<PImage> images)
     {
-        super(id, position, images, actionPeriod, animationPeriod);
+        super(id, position, images);
     }
-
-
-    public static Blacksmith createBlacksmith(
-            String id, Point position, List<PImage> images)
-    {
-        return new Blacksmith(id, position, images, 0,
-                0);
-    }
-
 
 }

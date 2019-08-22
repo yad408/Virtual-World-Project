@@ -3,47 +3,77 @@ import processing.core.PImage;
 import java.util.List;
 import java.util.Optional;
 
-public class OreBlob extends MoveableEntity{
+final class OreBlob extends AnimateEntity {
 
-    public static final String QUAKE_KEY = "quake";
+    private static final String QUAKE_KEY = "quake";
 
-    public OreBlob(
-            String id,
-            Point position,
-            List<PImage> images,
-            int actionPeriod,
-            int animationPeriod)
-    {
-        super(id, position, images, actionPeriod, animationPeriod);
+    OreBlob(String id, Point position, int actionPeriod, int animationPeriod, List<PImage> images) {
+        super(id, 0, position, actionPeriod, animationPeriod, images);
     }
 
+    public void executeAnimation(EventScheduler scheduler, Animation animation) {
+        nextImage();
 
-
-    static OreBlob createOreBlob(
-            String id,
-            Point position,
-            int actionPeriod,
-            int animationPeriod,
-            List<PImage> images)
-    {
-        return new OreBlob(id, position, images,
-                actionPeriod, animationPeriod);
+        if (animation.repeatCount != 1) {
+            scheduler.scheduleEvent(this, createAnimationAction(Math.max(animation.repeatCount - 1, 0)), getAnimationPeriod());
+        }
     }
 
-    public boolean moveToOreBlob(
-            WorldModel world,
-            Entity target,
-            EventScheduler scheduler)
-    {
-        if (Point.adjacent(this.getPosition(), target.getPosition())) {
+    public void executeActivity(EventScheduler scheduler, Activity activity) {
+        WorldModel world = activity.world;
+        ImageStore imageStore = activity.imageStore;
+
+        Optional<Entity> blobTarget = getPosition().findNearest(world, "Vein");
+        long nextPeriod = getActionPeriod();
+
+        if (blobTarget.isPresent()) {
+            Point tgtPos = blobTarget.get().getPosition();
+
+            if (this.moveToOreBlob(world, blobTarget.get(), scheduler)) {
+                Quake quake = new Quake(tgtPos, imageStore.getImageList(QUAKE_KEY));
+
+                world.addEntity(quake);
+                nextPeriod += getActionPeriod();
+                quake.scheduleActivity(scheduler, world, imageStore);
+            }
+        }
+
+        scheduler.scheduleEvent(this, createActivityAction(world, imageStore), nextPeriod);
+    }
+
+    private Point nextPositionOreBlob(WorldModel world,
+                                      Point destPos) {
+        int horiz = Integer.signum(destPos.x - getPosition().x);
+        Point newPos = new Point(getPosition().x + horiz,
+                getPosition().y);
+
+        Optional<Entity> occupant = world.getOccupant(newPos);
+
+        if (horiz == 0 ||
+                (occupant.isPresent() && !(occupant.getClass().getSimpleName().equals("Ore")))) {
+            int vert = Integer.signum(destPos.y - getPosition().y);
+            newPos = new Point(getPosition().x, getPosition().y + vert);
+            occupant = world.getOccupant(newPos);
+
+            if (vert == 0 ||
+                    (occupant.isPresent() && !(occupant.getClass().getSimpleName().equals("Ore")))) {
+                newPos = getPosition();
+            }
+        }
+
+        return newPos;
+    }
+
+    private boolean moveToOreBlob(WorldModel world,
+                                  Entity target, EventScheduler scheduler) {
+        if (getPosition().adjacent(target.getPosition())) {
             world.removeEntity(target);
             scheduler.unscheduleAllEvents(target);
             return true;
-        }
-        else {
-            Point nextPos = this.nextPosition(world, target.getPosition());
+        } else {
+            Point nextPos = this.nextPositionOreBlob(world, target.getPosition());
 
-            if (!this.getPosition().equals(nextPos)) {
+            if (!getPosition().equals(nextPos)) {
                 Optional<Entity> occupant = world.getOccupant(nextPos);
                 occupant.ifPresent(scheduler::unscheduleAllEvents);
 
@@ -53,32 +83,5 @@ public class OreBlob extends MoveableEntity{
         }
     }
 
-    public void execute(
-            WorldModel world,
-            ImageStore imageStore,
-            EventScheduler scheduler)
-    {
-        Optional<Entity> blobTarget =
-                world.findNearest(this.getPosition(), Vein.class);
-        long nextPeriod = this.getActionPeriod();
-
-        if (blobTarget.isPresent()) {
-            Point tgtPos = blobTarget.get().getPosition();
-
-            if (moveToOreBlob(world, blobTarget.get(), scheduler)) {
-                Entity quake = Quake.createQuake(tgtPos,
-                        ImageStore.getImageList(imageStore, QUAKE_KEY));
-
-                world.addEntity(quake);
-                nextPeriod += this.getActionPeriod();
-                ((Quake)quake).scheduleActions(scheduler, world, imageStore);
-            }
-        }
-
-        scheduler.scheduleEvent(this,
-                Activity.createActivityAction(this, world, imageStore),
-                nextPeriod);
-    }
-
-
 }
+

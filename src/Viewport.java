@@ -1,4 +1,4 @@
-public final class Viewport
+final class Viewport
 {
     private int row;
     private int col;
@@ -10,6 +10,11 @@ public final class Viewport
         this.numCols = numCols;
     }
 
+    void shift(int col, int row) {
+        this.col = col;
+        this.row = row;
+    }
+
     int getRow() {
         return row;
     }
@@ -18,17 +23,12 @@ public final class Viewport
         return col;
     }
 
-    int getNumCols() {
-        return numCols;
-    }
-
     int getNumRows() {
         return numRows;
     }
 
-    void shift(int col, int row) {
-        this.col = col;
-        this.row = row;
+    int getNumCols() {
+        return numCols;
     }
 
     boolean contains(Point p) {

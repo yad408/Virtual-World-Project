@@ -2,57 +2,36 @@ import processing.core.PImage;
 
 import java.util.List;
 
-abstract public class Entity
-{
-    private String id;
+public abstract class Entity {
+
+    private final String id;
     private Point position;
     private List<PImage> images;
-    private int imageIndex;
-    private int actionPeriod;
-    private int animationPeriod;
 
-    public Entity(String id, Point position, List<PImage> images, int actionPeriod, int animationPeriod){
+    public Entity(String id, Point position, List<PImage> images) {
+
         this.id = id;
         this.position = position;
         this.images = images;
-        this.imageIndex = 0;
-        this.actionPeriod = actionPeriod;
-        this.animationPeriod = animationPeriod;
     }
 
-
-    public String getId(){
+    public String getId() {
         return id;
     }
 
-    public int getAnimationPeriod() {
-        return animationPeriod;
-    }
-
-    public List<PImage> getImages(){
+    public List<PImage> getImages() {
         return images;
     }
 
-    public int getImageIndex() {
-        return imageIndex;
-    }
-
-    public Point getPosition(){
+    public Point getPosition() {
         return position;
     }
 
-    public void setPosition(Point pt){
-        this.position = pt;
+    public void setPosition(Point newPosition) {
+        position = newPosition;
     }
 
-    public int getActionPeriod(){
-        return actionPeriod;
-
+    PImage getCurrentImage() {
+        return images.get(0);
     }
-
-    public void nextImage(){
-        imageIndex = (this.getImageIndex() + 1) % this.getImages().size();
-    }
-
-
 }
