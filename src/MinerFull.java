@@ -3,7 +3,7 @@ import processing.core.PImage;
 import java.util.List;
 import java.util.Optional;
 
-public class MinerFull extends AnimateEntity {
+final class MinerFull extends AnimateEntity {
 
     MinerFull(String id, int resourceLimit, Point position, int actionPeriod, int animationPeriod, List<PImage> images) {
         super(id, resourceLimit, position, actionPeriod, animationPeriod, images);
