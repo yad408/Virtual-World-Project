@@ -1,17 +1,17 @@
 
-class Activity implements Action {
+public class Activity implements Action {
 
-    public AbstractEntity entity;
+    public ActionEntity entity;
     public WorldModel world;
     public ImageStore imageStore;
 
-    Activity(AbstractEntity entity, WorldModel world, ImageStore imageStore) {
+    public Activity(ActionEntity entity, WorldModel world, ImageStore imageStore) {
         this.entity = entity;
         this.world = world;
         this.imageStore = imageStore;
     }
 
-    public void execute(EventScheduler scheduler) {
-        entity.executeActivity(scheduler, this);
+    public void executeAction(EventScheduler scheduler) {
+        entity.executeActivity(world, imageStore, scheduler);
     }
 }

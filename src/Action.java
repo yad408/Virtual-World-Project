@@ -1,4 +1,4 @@
 interface Action {
-    void execute(EventScheduler scheduler);
+    void executeAction(EventScheduler scheduler);
 }
 

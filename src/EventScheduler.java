@@ -36,7 +36,7 @@ final class EventScheduler {
 
             this.removePendingEvent(next);
 
-            next.action.execute(this);
+            next.action.executeAction(this);
         }
     }
 

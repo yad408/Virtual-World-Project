@@ -6,57 +6,54 @@ import java.util.Optional;
 final class OreBlob extends AnimateEntity {
 
     private static final String QUAKE_KEY = "quake";
+    public static final String QUAKE_ID = "quake";
+    public static final int QUAKE_ACTION_PERIOD = 1100;
+    public static final int QUAKE_ANIMATION_PERIOD = 100;
+    public static final int QUAKE_ANIMATION_REPEAT_COUNT = 10;
 
-    OreBlob(String id, Point position, int actionPeriod, int animationPeriod, List<PImage> images) {
-        super(id, 0, position, actionPeriod, animationPeriod, images);
+
+    public OreBlob(String id, Point position, List<PImage> images, int actionPeriod, int animationPeriod) {
+        super(id, position, images, actionPeriod, animationPeriod);
     }
 
-    public void executeAnimation(EventScheduler scheduler, Animation animation) {
-        nextImage();
 
-        if (animation.repeatCount != 1) {
-            scheduler.scheduleEvent(this, createAnimationAction(Math.max(animation.repeatCount - 1, 0)), getAnimationPeriod());
-        }
-    }
-
-    public void executeActivity(EventScheduler scheduler, Activity activity) {
-        WorldModel world = activity.world;
-        ImageStore imageStore = activity.imageStore;
-
-        Optional<Entity> blobTarget = getPosition().findNearest(world, "Vein");
+    //executeActivity
+    public void executeActivity(WorldModel world, ImageStore imageStore, EventScheduler scheduler) {
+        Optional<Entity> blobTarget = world.findNearest(getPosition(), Vein.class);
         long nextPeriod = getActionPeriod();
 
         if (blobTarget.isPresent()) {
             Point tgtPos = blobTarget.get().getPosition();
 
-            if (this.moveToOreBlob(world, blobTarget.get(), scheduler)) {
-                Quake quake = new Quake(tgtPos, imageStore.getImageList(QUAKE_KEY));
+            if (moveToOreBlob(world, blobTarget.get(), scheduler)) {
+                Quake quake = new Quake(QUAKE_ID, tgtPos, imageStore.getImageList(QUAKE_KEY), QUAKE_ACTION_PERIOD, QUAKE_ANIMATION_PERIOD);
 
                 world.addEntity(quake);
                 nextPeriod += getActionPeriod();
-                quake.scheduleActivity(scheduler, world, imageStore);
+                quake.scheduleActions(scheduler, world, imageStore);
             }
         }
 
         scheduler.scheduleEvent(this, createActivityAction(world, imageStore), nextPeriod);
     }
 
-    private Point nextPositionOreBlob(WorldModel world,
-                                      Point destPos) {
+
+    //adjacent
+    //nextPositionOreBlob
+    private Point nextPositionOreBlob(WorldModel world, Point destPos) {
         int horiz = Integer.signum(destPos.x - getPosition().x);
-        Point newPos = new Point(getPosition().x + horiz,
-                getPosition().y);
+        Point newPos = new Point(getPosition().x + horiz, getPosition().y);
 
         Optional<Entity> occupant = world.getOccupant(newPos);
 
         if (horiz == 0 ||
-                (occupant.isPresent() && !(occupant.getClass().getSimpleName().equals("Ore")))) {
+                (occupant.isPresent() && !(occupant.get() instanceof Ore))) {
             int vert = Integer.signum(destPos.y - getPosition().y);
             newPos = new Point(getPosition().x, getPosition().y + vert);
             occupant = world.getOccupant(newPos);
 
             if (vert == 0 ||
-                    (occupant.isPresent() && !(occupant.getClass().getSimpleName().equals("Ore")))) {
+                    (occupant.isPresent() && !(occupant.get() instanceof Ore))) {
                 newPos = getPosition();
             }
         }
@@ -64,24 +61,27 @@ final class OreBlob extends AnimateEntity {
         return newPos;
     }
 
-    private boolean moveToOreBlob(WorldModel world,
-                                  Entity target, EventScheduler scheduler) {
-        if (getPosition().adjacent(target.getPosition())) {
+    //moveToOreBlob
+    private boolean moveToOreBlob(WorldModel world, Entity target, EventScheduler scheduler) {
+        if (Point.adjacent(getPosition(), target.getPosition())) {
             world.removeEntity(target);
             scheduler.unscheduleAllEvents(target);
             return true;
         } else {
-            Point nextPos = this.nextPositionOreBlob(world, target.getPosition());
+            Point nextPos = nextPositionOreBlob(world, target.getPosition());
 
             if (!getPosition().equals(nextPos)) {
                 Optional<Entity> occupant = world.getOccupant(nextPos);
-                occupant.ifPresent(scheduler::unscheduleAllEvents);
+                if (occupant.isPresent()) {
+                    scheduler.unscheduleAllEvents(occupant.get());
+                }
 
-                world.moveEntity(this, nextPos);
+                world.moveEntity(nextPos, this);
             }
             return false;
         }
     }
+
 
 }
 

@@ -3,79 +3,59 @@ import processing.core.PImage;
 import java.util.List;
 import java.util.Optional;
 
-final class MinerFull extends AnimateEntity {
+final class MinerFull extends Miner {
 
-    MinerFull(String id, int resourceLimit, Point position, int actionPeriod, int animationPeriod, List<PImage> images) {
-        super(id, resourceLimit, position, actionPeriod, animationPeriod, images);
+    private static final String MINER_KEY = "miner";
+    private static final int MINER_NUM_PROPERTIES = 7;
+    private static final int MINER_ID = 1;
+    private static final int MINER_COL = 2;
+    private static final int MINER_ROW = 3;
+    private static final int MINER_LIMIT = 4;
+    private static final int MINER_ACTION_PERIOD = 5;
+    private static final int MINER_ANIMATION_PERIOD = 6;
+
+    public MinerFull(String id, Point position, List<PImage> images, int actionPeriod, int animationPeriod, int resourceCount, int resourceLimit) {
+        super(id, position, images, actionPeriod, animationPeriod, resourceCount, resourceLimit);
     }
 
-    public void executeAnimation(EventScheduler scheduler, Animation animation) {
-        nextImage();
+    public void executeActivity(WorldModel world, ImageStore imageStore, EventScheduler scheduler) {
+        Optional<Entity> fullTarget = world.findNearest(this.getPosition(), Blacksmith.class);
 
-        if (animation.repeatCount != 1) {
-            scheduler.scheduleEvent(this, createAnimationAction(Math.max(animation.repeatCount - 1, 0)), getAnimationPeriod());
-        }
-    }
-
-    public void executeActivity(EventScheduler scheduler, Activity activity) {
-        WorldModel world = activity.world;
-        ImageStore imageStore = activity.imageStore;
-
-        Optional<Entity> fullTarget = getPosition().findNearest(world, "Blacksmith");
-
-        if (fullTarget.isPresent() &&
-                this.moveToFull(world, fullTarget.get(), scheduler)) {
-            this.transformFull(world, scheduler, imageStore);
+        if (fullTarget.isPresent() && moveToFull(world, fullTarget.get(), scheduler)) {
+            transformFull(world, scheduler, imageStore);
         } else {
-            scheduler.scheduleEvent(this,
-                    this.createActivityAction(world, imageStore),
-                    getActionPeriod());
+            scheduler.scheduleEvent(this, createActivityAction(world, imageStore), this.getActionPeriod());
         }
     }
 
-    private Point nextPositionMiner(WorldModel world, Point destPos) {
-        int horiz = Integer.signum(destPos.x - getPosition().x);
-        Point newPos = new Point(getPosition().x + horiz,
-                getPosition().y);
-
-        if (horiz == 0 || newPos.isOccupied(world)) {
-            int vert = Integer.signum(destPos.y - getPosition().y);
-            newPos = new Point(getPosition().x,
-                    getPosition().y + vert);
-
-            if (vert == 0 || newPos.isOccupied(world)) {
-                newPos = getPosition();
-            }
-        }
-
-        return newPos;
-    }
-
-    private boolean moveToFull(WorldModel world, Entity target, EventScheduler scheduler) {
-        if (getPosition().adjacent(target.getPosition())) {
+    //nextPositonMiner
+    //moveToFull()
+    public boolean moveToFull(WorldModel world, Entity target, EventScheduler scheduler) {
+        if (Point.adjacent(getPosition(), target.getPosition())) {
             return true;
         } else {
             Point nextPos = nextPositionMiner(world, target.getPosition());
 
             if (!getPosition().equals(nextPos)) {
                 Optional<Entity> occupant = world.getOccupant(nextPos);
-                occupant.ifPresent(scheduler::unscheduleAllEvents);
+                if (occupant.isPresent()) {
+                    scheduler.unscheduleAllEvents(occupant.get());
+                }
 
-                world.moveEntity(this, nextPos);
+                world.moveEntity(nextPos, this);
             }
             return false;
         }
     }
 
-    private void transformFull(WorldModel world, EventScheduler scheduler, ImageStore imageStore) {
-        MinerNotFull miner = new MinerNotFull(getId(), getResourceLimit(),
-                getPosition(), getActionPeriod(), getAnimationPeriod(),
-                getImages());
+    //transformFull()
+    public void transformFull(WorldModel world, EventScheduler scheduler, ImageStore imageStore) {
+        MinerNotFull miner = new MinerNotFull(getId(), getPosition(), getImages(), getActionPeriod(), getAnimationPeriod(), 0, resourceLimit);
 
         world.removeEntity(this);
         scheduler.unscheduleAllEvents(this);
 
         world.addEntity(miner);
-        miner.scheduleActivity(scheduler, world, imageStore);
+        miner.scheduleActions(scheduler, world, imageStore);
     }
 }

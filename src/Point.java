@@ -1,5 +1,3 @@
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 
 final class Point {
@@ -12,44 +10,16 @@ final class Point {
         this.y = y;
     }
 
-    Optional<Entity> findNearest(WorldModel world, String entityClassName) {
-        List<Entity> ofType = new LinkedList<>();
-        for (Entity entity : world.entities) {
-            if (entity.getClass().getSimpleName().equals(entityClassName)) {
-                ofType.add(entity);
-            }
-        }
-
-        return nearestEntity(ofType);
+    public static boolean adjacent(Point p1, Point p2) {
+        return (p1.x == p2.x && Math.abs(p1.y - p2.y) == 1) || (p1.y == p2.y && Math.abs(p1.x - p2.x) == 1);
     }
 
-    boolean isOccupied(WorldModel world) {
-        return withinBounds(world) &&
-                world.getOccupancyCell(this) != null;
-    }
+    //distanceSquared
+    public static int distanceSquared(Point p1, Point p2) {
+        int deltaX = p1.x - p2.x;
+        int deltaY = p1.y - p2.y;
 
-    boolean withinBounds(WorldModel world) {
-        return y >= 0 && y < world.numRows &&
-                x >= 0 && x < world.numCols;
-    }
-
-    Optional<Point> findOpenAround(WorldModel world) {
-        for (int dy = -ORE_REACH; dy <= ORE_REACH; dy++) {
-            for (int dx = -ORE_REACH; dx <= ORE_REACH; dx++) {
-                Point newPt = new Point(x + dx, y + dy);
-                if (newPt.withinBounds(world) &&
-                        !newPt.isOccupied(world)) {
-                    return Optional.of(newPt);
-                }
-            }
-        }
-
-        return Optional.empty();
-    }
-
-    boolean adjacent(Point p2) {
-        return (x == p2.x && Math.abs(y - p2.y) == 1) ||
-                (y == p2.y && Math.abs(x - p2.x) == 1);
+        return deltaX * deltaX + deltaY * deltaY;
     }
 
     public String toString() {
@@ -69,30 +39,18 @@ final class Point {
         return result;
     }
 
-    private int distanceSquared(Point p2) {
-        int deltaX = x - p2.x;
-        int deltaY = y - p2.y;
-
-        return deltaX * deltaX + deltaY * deltaY;
-    }
-
-    private Optional<Entity> nearestEntity(List<Entity> entities) {
-        if (entities.isEmpty()) {
-            return Optional.empty();
-        } else {
-            Entity nearest = entities.get(0);
-            int nearestDistance = nearest.getPosition().distanceSquared(this);
-
-            for (Entity other : entities) {
-                int otherDistance = other.getPosition().distanceSquared(this);
-
-                if (otherDistance < nearestDistance) {
-                    nearest = other;
-                    nearestDistance = otherDistance;
+    //findOpenAround
+    public Optional<Point> findOpenAround(WorldModel world) {
+        for (int dy = -ORE_REACH; dy <= ORE_REACH; dy++) {
+            for (int dx = -ORE_REACH; dx <= ORE_REACH; dx++) {
+                Point newPt = new Point(x + dx, y + dy);
+                if (world.withinBounds(newPt) && !world.isOccupied(newPt)) {
+                    return Optional.of(newPt);
                 }
             }
-
-            return Optional.of(nearest);
         }
+
+        return Optional.empty();
     }
+
 }

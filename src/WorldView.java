@@ -5,19 +5,21 @@ import java.util.Optional;
 
 final class WorldView
 {
-    private PApplet screen;
-    private WorldModel world;
-    private int tileWidth;
-    private int tileHeight;
-    private Viewport viewport;
+    public static final int COLOR_MASK = 0xffffff;
+    private static final String VEIN_KEY = "vein";
+    private static final int VEIN_NUM_PROPERTIES = 5;
+    private static final int VEIN_ID = 1;
+    private static final int VEIN_COL = 2;
+    private static final int VEIN_ROW = 3;
+    private static final int VEIN_ACTION_PERIOD = 4;
+    public PApplet screen;
+    public WorldModel world;
+    public int tileWidth;
+    public int tileHeight;
+    public Viewport viewport;
 
-    WorldView(
-            int numRows,
-            int numCols,
-            PApplet screen,
-            WorldModel world,
-            int tileWidth,
-            int tileHeight)
+    public WorldView(int numRows, int numCols, PApplet screen, WorldModel world,
+                     int tileWidth, int tileHeight)
     {
         this.screen = screen;
         this.world = world;
@@ -26,44 +28,52 @@ final class WorldView
         this.viewport = new Viewport(numRows, numCols);
     }
 
-    private void drawBackground() {
-        for (int row = 0; row < this.viewport.getNumRows(); row++) {
-            for (int col = 0; col < this.viewport.getNumCols(); col++) {
-                Point worldPoint = this.viewport.viewportToWorld(col, row);
-                Optional<PImage> image =
-                        world.getBackgroundImage(worldPoint);
+    /*
+      Called with color for which alpha should be set and alpha value.
+      setAlpha(img, color(255, 255, 255), 0));
+    */
+
+    //shiftView()
+
+    public void shiftView(int colDelta, int rowDelta) {
+        int newCol = clamp(viewport.col + colDelta, 0, world.numCols - viewport.numCols);
+        int newRow = clamp(viewport.row + rowDelta, 0, world.numRows - viewport.numRows);
+
+        viewport.shift(newCol, newRow);
+    }
+
+    //drawBackground()
+
+    public void drawBackground() {
+        for (int row = 0; row < viewport.numRows; row++) {
+            for (int col = 0; col < viewport.numCols; col++) {
+                Point worldPoint = viewport.viewportToWorld(col, row);
+                Optional<PImage> image = world.getBackgroundImage(worldPoint);
                 if (image.isPresent()) {
-                    this.screen.image(image.get(), col * this.tileWidth,
-                            row * this.tileHeight);
+                    screen.image(image.get(), col * tileWidth, row * tileHeight);
                 }
             }
         }
     }
 
-    private void drawEntities() {
+    public void drawViewport() {
+        drawBackground();
+        drawEntities();
+    }
+
+    public void drawEntities() {
         for (Entity entity : world.entities) {
             Point pos = entity.getPosition();
 
-            if (this.viewport.contains(pos)) {
-                Point viewPoint = this.viewport.worldToViewport(pos.x, pos.y);
-                this.screen.image(entity.getCurrentImage(),
-                        viewPoint.x * this.tileWidth,
-                        viewPoint.y * this.tileHeight);
+            if (viewport.contains(pos)) {
+                Point viewPoint = viewport.worldToViewport(pos.x, pos.y);
+                screen.image(entity.getCurrentImage(),
+                        viewPoint.x * tileWidth, viewPoint.y * tileHeight);
             }
         }
     }
 
-    void shiftView(int colDelta, int rowDelta) {
-        int newCol = Functions.clamp(this.viewport.getCol() + colDelta,
-                this.world.numCols - this.viewport.getNumCols());
-        int newRow = Functions.clamp(this.viewport.getRow() + rowDelta,
-                this.world.numRows - this.viewport.getNumRows());
-
-        viewport.shift(newCol, newRow);
-    }
-
-    void drawViewport() {
-        drawBackground();
-        drawEntities();
+    public int clamp(int value, int low, int high) {
+        return Math.min(high, Math.max(value, low));
     }
 }
