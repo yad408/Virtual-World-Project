@@ -11,7 +11,7 @@ final class EventScheduler {
         this.timeScale = timeScale;
     }
 
-    void unscheduleAllEvents(Entity entity) {
+    public void unscheduleAllEvents(Entity entity) {
         List<Event> pending = pendingEvents.remove(entity);
 
         if (pending != null) {
@@ -29,7 +29,7 @@ final class EventScheduler {
         }
     }
 
-    void updateOnTime(long time) {
+    public void updateOnTime(long time) {
         while (!eventQueue.isEmpty() &&
                 eventQueue.peek().time < time) {
             Event next = eventQueue.poll();
@@ -40,14 +40,13 @@ final class EventScheduler {
         }
     }
 
-    void scheduleEvent(Entity entity, Action action, long afterPeriod) {
+    public void scheduleEvent(Entity entity, Action action, long afterPeriod) {
         long time = System.currentTimeMillis() +
                 (long) (afterPeriod * timeScale);
         Event event = new Event(action, time, entity);
 
         eventQueue.add(event);
 
-        // update list of pending events for the given entity
         List<Event> pending = pendingEvents.getOrDefault(entity,
                 new LinkedList<>());
         pending.add(event);

@@ -6,10 +6,9 @@ import java.util.Optional;
 final class OreBlob extends AnimateEntity {
 
     private static final String QUAKE_KEY = "quake";
-    public static final String QUAKE_ID = "quake";
-    public static final int QUAKE_ACTION_PERIOD = 1100;
-    public static final int QUAKE_ANIMATION_PERIOD = 100;
-    public static final int QUAKE_ANIMATION_REPEAT_COUNT = 10;
+    private static final String QUAKE_ID = "quake";
+    private static final int QUAKE_ACTION_PERIOD = 1100;
+    private static final int QUAKE_ANIMATION_PERIOD = 100;
 
 
     public OreBlob(String id, Point position, List<PImage> images, int actionPeriod, int animationPeriod) {
@@ -17,7 +16,6 @@ final class OreBlob extends AnimateEntity {
     }
 
 
-    //executeActivity
     public void executeActivity(WorldModel world, ImageStore imageStore, EventScheduler scheduler) {
         Optional<Entity> blobTarget = world.findNearest(getPosition(), Vein.class);
         long nextPeriod = getActionPeriod();
@@ -38,9 +36,7 @@ final class OreBlob extends AnimateEntity {
     }
 
 
-    //adjacent
-    //nextPositionOreBlob
-    private Point nextPositionOreBlob(WorldModel world, Point destPos) {
+    public Point nextPositionOreBlob(WorldModel world, Point destPos) {
         int horiz = Integer.signum(destPos.x - getPosition().x);
         Point newPos = new Point(getPosition().x + horiz, getPosition().y);
 
@@ -61,8 +57,7 @@ final class OreBlob extends AnimateEntity {
         return newPos;
     }
 
-    //moveToOreBlob
-    private boolean moveToOreBlob(WorldModel world, Entity target, EventScheduler scheduler) {
+    public boolean moveToOreBlob(WorldModel world, Entity target, EventScheduler scheduler) {
         if (Point.adjacent(getPosition(), target.getPosition())) {
             world.removeEntity(target);
             scheduler.unscheduleAllEvents(target);
@@ -72,9 +67,7 @@ final class OreBlob extends AnimateEntity {
 
             if (!getPosition().equals(nextPos)) {
                 Optional<Entity> occupant = world.getOccupant(nextPos);
-                if (occupant.isPresent()) {
-                    scheduler.unscheduleAllEvents(occupant.get());
-                }
+                occupant.ifPresent(scheduler::unscheduleAllEvents);
 
                 world.moveEntity(nextPos, this);
             }

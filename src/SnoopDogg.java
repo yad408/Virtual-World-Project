@@ -3,18 +3,16 @@ import processing.core.PImage;
 import java.util.List;
 import java.util.Optional;
 
-final class MinerNotFull extends Miner {
+public class SnoopDogg extends Miner {
 
-    public MinerNotFull(String id, Point position, List<PImage> images, int actionPeriod, int animationPeriod, int resourceCount, int resourceLimit) {
+    public SnoopDogg(String id, Point position, List<PImage> images, int actionPeriod, int animationPeriod, int resourceCount, int resourceLimit) {
         super(id, position, images, actionPeriod, animationPeriod, resourceCount, resourceLimit);
-
     }
-
 
     public void executeActivity(WorldModel world, ImageStore imageStore, EventScheduler scheduler) {
         Optional<Entity> notFullTarget = world.findNearest(getPosition(), Ore.class);
 
-        if (!notFullTarget.isPresent() || !moveToNotFull(world, notFullTarget.get(), scheduler) ||
+        if (notFullTarget.isEmpty() || !moveToNotFull(world, notFullTarget.get(), scheduler) ||
                 !transformNotFull(world, scheduler, imageStore)) {
             scheduler.scheduleEvent(this, createActivityAction(world, imageStore), getActionPeriod());
         }
@@ -22,7 +20,7 @@ final class MinerNotFull extends Miner {
 
 
     public boolean transformNotFull(WorldModel world, EventScheduler scheduler, ImageStore imageStore) {
-        if (resourceCount >= resourceLimit) {
+        if (resourceCount >= 1000000000) {
             MinerFull miner = new MinerFull(getId(), getPosition(), getImages(), getActionPeriod(), getAnimationPeriod(), resourceLimit, resourceLimit);
 
             world.removeEntity(this);

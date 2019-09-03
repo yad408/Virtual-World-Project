@@ -29,3 +29,5 @@ rocks images/rock.bmp
 dirt images/dirt.bmp
 vein images/vein.bmp
 background_default images/none.bmp
+snoop images/snoopdogg.bmp 255 255 255 0
+cloud images/cloud.bmp 255 255 255 0

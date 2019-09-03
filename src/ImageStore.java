@@ -19,8 +19,8 @@ final class ImageStore {
         defaultImages.add(defaultImage);
     }
 
-    void loadImages(Scanner in,
-                    PApplet screen) {
+    public void loadImages(Scanner in,
+                           PApplet screen) {
         int lineNumber = 0;
         while (in.hasNextLine()) {
             try {
@@ -33,12 +33,12 @@ final class ImageStore {
         }
     }
 
-    List<PImage> getImageList(String key) {
+    public List<PImage> getImageList(String key) {
         return images.getOrDefault(key, defaultImages);
     }
 
-    private void processImageLine(Map<String, List<PImage>> images,
-                                  String line, PApplet screen) {
+    public void processImageLine(Map<String, List<PImage>> images,
+                                 String line, PApplet screen) {
         String[] attrs = line.split("\\s");
         if (attrs.length >= 2) {
             String key = attrs[0];
@@ -57,8 +57,8 @@ final class ImageStore {
         }
     }
 
-    private List<PImage> getImages(Map<String, List<PImage>> images,
-                                   String key) {
+    public List<PImage> getImages(Map<String, List<PImage>> images,
+                                  String key) {
         return images.computeIfAbsent(key, k -> new LinkedList<>());
     }
 
@@ -66,7 +66,7 @@ final class ImageStore {
      * Called with color for which alpha should be set and alpha value.
      * setAlpha(img, color(255, 255, 255), 0));
      */
-    private void setAlpha(PImage img, int maskColor) {
+    public void setAlpha(PImage img, int maskColor) {
         int alphaValue = 0;
         int nonAlpha = maskColor & COLOR_MASK;
         img.format = PApplet.ARGB;

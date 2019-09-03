@@ -2,18 +2,18 @@ import processing.core.PImage;
 
 import java.util.List;
 
-public abstract class Miner extends AnimateEntity {
+abstract class Miner extends AnimateEntity {
 
-    public int resourceCount;
-    public int resourceLimit;
+    int resourceCount;
+    int resourceLimit;
 
-    public Miner(String id, Point position, List<PImage> images, int actionPeriod, int animationPeriod, int resourceCount, int resourceLimit) {
+    Miner(String id, Point position, List<PImage> images, int actionPeriod, int animationPeriod, int resourceCount, int resourceLimit) {
         super(id, position, images, actionPeriod, animationPeriod);
         this.resourceLimit = resourceLimit;
         this.resourceCount = resourceCount;
     }
 
-    public Point nextPositionMiner(WorldModel world, Point destPos) {
+    Point nextPositionMiner(WorldModel world, Point destPos) {
         int horiz = Integer.signum(destPos.x - getPosition().x);
         Point newPos = new Point(getPosition().x + horiz, getPosition().y);
 

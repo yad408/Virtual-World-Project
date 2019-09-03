@@ -7,14 +7,8 @@ import java.util.Random;
 public class Vein extends ActionEntity {
 
     public static final Random rand = new Random();
-    private static final String VEIN_KEY = "vein";
-    private static final int VEIN_NUM_PROPERTIES = 5;
-    private static final int VEIN_ID = 1;
-    private static final int VEIN_COL = 2;
-    private static final int VEIN_ROW = 3;
 
     private static final String ORE_ID_PREFIX = "ore -- ";
-    private static final int VEIN_ACTION_PERIOD = 4;
     private static final int ORE_CORRUPT_MIN = 20000;
     private static final int ORE_CORRUPT_MAX = 30000;
     private static final String ORE_KEY = "ore";
@@ -24,7 +18,7 @@ public class Vein extends ActionEntity {
         super(id, position, images, actionPeriod);
     }
 
-    //executeActivity check
+
     public void executeActivity(WorldModel world, ImageStore imageStore, EventScheduler scheduler) {
         Optional<Point> openPt = getPosition().findOpenAround(world);
 

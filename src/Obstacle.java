@@ -18,18 +18,16 @@ public class Obstacle implements Entity {
         return images;
     }
 
-    //getID()
     public String getId() {
         return id;
     }
 
-    //getPosition
     public Point getPosition() {
         return position;
     }
 
-    public void setPosition(Point newposition) {
-        position = newposition;
+    public void setPosition(Point pt) {
+        position = pt;
     }
 
     public PImage getCurrentImage() {

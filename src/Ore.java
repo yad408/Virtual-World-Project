@@ -5,12 +5,7 @@ import java.util.Random;
 
 final class Ore extends ActionEntity {
 
-    public static final Random rand = new Random();
-    private static final int ORE_NUM_PROPERTIES = 5;
-    private static final int ORE_ID = 1;
-    private static final int ORE_COL = 2;
-    private static final int ORE_ROW = 3;
-    private static final int ORE_ACTION_PERIOD = 4;
+    private static final Random rand = new Random();
     private static final String BLOB_KEY = "blob";
     private static final String BLOB_ID_SUFFIX = " -- blob";
     private static final int BLOB_PERIOD_SCALE = 4;
@@ -22,9 +17,8 @@ final class Ore extends ActionEntity {
     }
 
 
-    //executeActivity
     public void executeActivity(WorldModel world, ImageStore imageStore, EventScheduler scheduler) {
-        Point pos = getPosition();    // store current position before removing
+        Point pos = getPosition();
 
         world.removeEntity(this);
         scheduler.unscheduleAllEvents(this);

@@ -10,7 +10,7 @@ abstract public class ActionEntity implements Entity {
     private int imageIndex;
     private List<PImage> images;
 
-    public ActionEntity(String id, Point position, List<PImage> images, int actionPeriod) {
+    ActionEntity(String id, Point position, List<PImage> images, int actionPeriod) {
         this.id = id;
         this.position = position;
         this.images = images;

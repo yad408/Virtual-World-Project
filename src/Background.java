@@ -13,7 +13,11 @@ public final class Background
         this.images = images;
     }
 
-    PImage getCurrentImage() {
+    public PImage getCurrentImage() {
         return images.get(imageIndex);
+    }
+
+    public Object getId() {
+        return this.id;
     }
 }

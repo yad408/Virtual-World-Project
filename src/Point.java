@@ -10,11 +10,15 @@ final class Point {
         this.y = y;
     }
 
-    public static boolean adjacent(Point p1, Point p2) {
+    static boolean adjacent(Point p1, Point p2) {
+
         return (p1.x == p2.x && Math.abs(p1.y - p2.y) == 1) || (p1.y == p2.y && Math.abs(p1.x - p2.x) == 1);
     }
 
-    //distanceSquared
+    public int getX() {
+        return this.x;
+    }
+
     public static int distanceSquared(Point p1, Point p2) {
         int deltaX = p1.x - p2.x;
         int deltaY = p1.y - p2.y;
@@ -39,7 +43,6 @@ final class Point {
         return result;
     }
 
-    //findOpenAround
     public Optional<Point> findOpenAround(WorldModel world) {
         for (int dy = -ORE_REACH; dy <= ORE_REACH; dy++) {
             for (int dx = -ORE_REACH; dx <= ORE_REACH; dx++) {
@@ -53,4 +56,7 @@ final class Point {
         return Optional.empty();
     }
 
+    public int getY() {
+        return this.y;
+    }
 }

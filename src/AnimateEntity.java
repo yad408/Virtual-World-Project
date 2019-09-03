@@ -16,7 +16,7 @@ abstract public class AnimateEntity extends ActionEntity {
     }
 
     public Action createAnimationAction(int repeatCount) {
-        return new Animation(this, null, null, repeatCount);
+        return new Animation(this, repeatCount);
     }
 
     public void nextImage() {

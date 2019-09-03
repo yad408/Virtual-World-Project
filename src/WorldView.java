@@ -5,18 +5,11 @@ import java.util.Optional;
 
 final class WorldView
 {
-    public static final int COLOR_MASK = 0xffffff;
-    private static final String VEIN_KEY = "vein";
-    private static final int VEIN_NUM_PROPERTIES = 5;
-    private static final int VEIN_ID = 1;
-    private static final int VEIN_COL = 2;
-    private static final int VEIN_ROW = 3;
-    private static final int VEIN_ACTION_PERIOD = 4;
-    public PApplet screen;
-    public WorldModel world;
-    public int tileWidth;
-    public int tileHeight;
-    public Viewport viewport;
+    private PApplet screen;
+    private WorldModel world;
+    private int tileWidth;
+    private int tileHeight;
+    private Viewport viewport;
 
     public WorldView(int numRows, int numCols, PApplet screen, WorldModel world,
                      int tileWidth, int tileHeight)
@@ -33,20 +26,17 @@ final class WorldView
       setAlpha(img, color(255, 255, 255), 0));
     */
 
-    //shiftView()
-
     public void shiftView(int colDelta, int rowDelta) {
-        int newCol = clamp(viewport.col + colDelta, 0, world.numCols - viewport.numCols);
-        int newRow = clamp(viewport.row + rowDelta, 0, world.numRows - viewport.numRows);
+        int newCol = Functions.clamp(viewport.getCol() + colDelta, 0, world.getNumCols() - viewport.getNumCols());
+        int newRow = Functions.clamp(viewport.getRow() + rowDelta, 0, world.getNumRows() - viewport.getNumRows());
 
         viewport.shift(newCol, newRow);
     }
 
-    //drawBackground()
 
     public void drawBackground() {
-        for (int row = 0; row < viewport.numRows; row++) {
-            for (int col = 0; col < viewport.numCols; col++) {
+        for (int row = 0; row < viewport.getNumRows(); row++) {
+            for (int col = 0; col < viewport.getNumCols(); col++) {
                 Point worldPoint = viewport.viewportToWorld(col, row);
                 Optional<PImage> image = world.getBackgroundImage(worldPoint);
                 if (image.isPresent()) {
@@ -62,7 +52,7 @@ final class WorldView
     }
 
     public void drawEntities() {
-        for (Entity entity : world.entities) {
+        for (Entity entity : world.getEntities()) {
             Point pos = entity.getPosition();
 
             if (viewport.contains(pos)) {
@@ -73,7 +63,8 @@ final class WorldView
         }
     }
 
-    public int clamp(int value, int low, int high) {
-        return Math.min(high, Math.max(value, low));
+    public Viewport getViewport() {
+        return viewport;
     }
+
 }

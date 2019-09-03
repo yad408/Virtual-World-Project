@@ -1,9 +1,9 @@
 
 public class Activity implements Action {
 
-    public ActionEntity entity;
-    public WorldModel world;
-    public ImageStore imageStore;
+    private ActionEntity entity;
+    private WorldModel world;
+    private ImageStore imageStore;
 
     public Activity(ActionEntity entity, WorldModel world, ImageStore imageStore) {
         this.entity = entity;
